@@ -1,0 +1,53 @@
+<head>
+  <!-- Plotly.js -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
+  <script src="./triangle.js"></script>
+</head>
+
+<body>
+  
+  <input type='file' accept='text/plain' onchange='openFile(event)'><br>
+  <div id="myDiv" style="width: 100%; height: 100%;">
+  <div id='output'>
+  <!-- Plotly chart will be drawn inside this DIV --></div>
+  
+  <script type="application/javascript">
+      var openFile = function(event) {
+        var input = event.target;
+
+        var reader = new FileReader();
+        reader.onload = function(){
+      
+          var data = [];
+          var json = JSON.parse(reader.result)
+          
+          for(i=0; i<json.frames.length; ++i)
+          {
+              var trace1 = {
+                x: json.frames[i].index,
+                y: json.frames[i].left,
+                type: json.type
+              };
+              data.push(trace1);
+
+              if(json.stereo)
+              {
+                  var trace2 = {
+                    x: json.frames[i].index,
+                    y: json.frames[i].right, 
+                    type: json.type
+                  };
+                  data.push(trace2);
+              }
+          }
+          
+          Plotly.newPlot('myDiv', data);
+      
+        };
+        reader.readAsText(input.files[0]);
+      };
+
+  </script>
+</body>
